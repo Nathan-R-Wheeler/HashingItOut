@@ -15,6 +15,10 @@ from sympy import isprime
 #linear probing method, at minimum we need a table the size of the data
 #linked list method, when collide, add to end of linked list at index
 
+#calculate size of table itself not knowing input size
+
+#FOR LINEAR PROBING THE TABLE HAS TO BE BIGGER THAN THE INPUT
+
 #hash the hash function
 
 #quadratic probing: for j in range(1, tableSize + 1) 
@@ -112,9 +116,9 @@ class HashTables():
         return key
 
     def toASCII(stringData):
-            firstFive = stringData[:5]
+            firstFive = stringData[:5]  #First Try, has massive amount of collisions
             toNumber = [ord (char) for char in firstFive]
-            print (toNumber)
+            #print (toNumber)
             return toNumber
 
     #take a random number and check if it is prime using the 
@@ -153,19 +157,37 @@ def main():
                 counter += 1
                 #hash the dataitems as they come in
 
-    hashTable = HashTables(len(dataItems))
 
+
+
+    #run for title
+    titleTable = HashTables(len(dataItems))
     start = time.time()
+    print("Running Title")
+    for items in dataItems:
+        movieName = items.movieName if items.movieName is not None else ""
+        nameKey = movieName 
+        titleTable.insert(nameKey, items)
+        end = time.time()
+    print(f"Loaded {counter} items.")
+    print(f"{end-start:0.2f} seconds")
+    print(f'there were {titleTable.collisions} collisions')
+
+
+    #run for quote
+    quoteTable = HashTables(len(dataItems))
+    start = time.time()
+    print("Running quote")
     for items in dataItems:
         movieName = items.movieName if items.movieName is not None else ""
         quote = items.quote if items.quote is not None else ""
-        key = movieName + quote
-        hashTable.insert(key, items)
+        quoteKey = quote
+        quoteTable.insert(quoteKey, items)
 
     end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
-    print(f'there were {hashTable.collisions} collisions')
+    print(f'there were {quoteTable.collisions} collisions')
 
 if __name__=="__main__":
     main()
