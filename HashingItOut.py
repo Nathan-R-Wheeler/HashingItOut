@@ -33,28 +33,37 @@ class node:
     def nextNode(self, next):
         self.next = next
 
-# class linkedList:
-#     def __init__(self):
-#         self.head = None
-#         self.tail = None
-#         self.size = 0
+class linkedList:
+    def __init__(self):
+        self.head = None
 
-#     def insert(self, key, value):
-#         #check to see if there is key & value
-#         if not key  and value:
-#             print("Key or Value was none")
-#             return
-#         newNode = node(key, value)
-#         if self.size == 0:
-#             self.head = newNode
-#             self.tail = newNode
-#             self.size = 1
-#             return
-#         self.head.next = newNode
-#         self.head = newNode
-#         #increase the ammount of links in the list
-#         self.size += 1
-#         return
+    def insert(self, key, value):
+        #watch for collisions, initiate a counter
+        collisions = 0
+        #check to see if there is key & value
+        if not key  or not value:
+            print("Key or Value was none")
+            return collisions
+        
+        newNode = node(key, value)
+
+        if self.head is None:
+            self.head = newNode
+        
+            return collisions
+        
+        currentNode = self.head
+        parentNode = currentNode
+
+        while (currentNode is not None):
+            if currentNode.key == newNode.key:
+                return collisions
+            else:
+                parentNode = currentNode
+                currentNode = currentNode.next
+            collisions += 1
+        parentNode.next = currentNode
+        return collisions
         
 
 
@@ -78,31 +87,16 @@ class HashTables():
         self.size = size
         self.prime = HashTables.randPrime(1000, 15000)
         self.collisions = 0
-        self.valueTable = [None] * size
-        self.keyTable = [None] * size
+        self.linkedList = [linkedList()] * size
 
     #inserts into the hash function
     def insert(self, key, value):
         hashedKeys = self.hashKey(key)
         index = hashedKeys % self.size
+        linkedList = self.linkedList[index]
+        self.collisions += linkedList.insert(hashedKeys, value)
 
-        if (self.keyTable[index] is None):
-            self.keyTable[index] = key
-            self.valueTable[index] = value
-        elif (self.keyTable[index] != key):
-            self.collisions += 1
-            hasPlacedValue = False
-            while(not hasPlacedValue):
-                index += 1
-                if (index >= self.size):
-                    index = 0
-
-                if (self.keyTable[index] is None):
-                    self.keyTable[index] = key
-                    self.valueTable[index] = value
-                    hasPlacedValue = True
-                elif (self.keyTable[index] == key):
-                    hasPlacedValue = True
+      
 
     #Hashes using the title of the movie
     def hashKey(self, Key):
@@ -158,36 +152,34 @@ def main():
                 #hash the dataitems as they come in
 
 
-
+    hashTable = HashTables(5)
 
     #run for title
-    titleTable = HashTables(len(dataItems))
     start = time.time()
     print("Running Title")
     for items in dataItems:
         movieName = items.movieName if items.movieName is not None else ""
         nameKey = movieName 
-        titleTable.insert(nameKey, items)
+        hashTable.insert(nameKey, items)
         end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
-    print(f'there were {titleTable.collisions} collisions')
+    print(f'there were {hashTable.collisions} collisions')
 
-
+    hashTable = HashTables(5)
     #run for quote
-    quoteTable = HashTables(len(dataItems))
     start = time.time()
     print("Running quote")
     for items in dataItems:
         movieName = items.movieName if items.movieName is not None else ""
         quote = items.quote if items.quote is not None else ""
         quoteKey = quote
-        quoteTable.insert(quoteKey, items)
+        hashTable.insert(quoteKey, items)
 
     end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
-    print(f'there were {quoteTable.collisions} collisions')
+    print(f'there were {hashTable.collisions} collisions')
 
 if __name__=="__main__":
     main()

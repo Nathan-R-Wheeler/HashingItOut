@@ -10,6 +10,7 @@ COS-226 <br>
 This attempt implements a very basic hash function, it addes all of the ASCII values of the first 5 letters in the string and applies a random prime number modulo. I chose it because it seemed the most straight forward and easiest hash to achieve, and so it is the first one I attempted to make. My friend looked at it and completely insulted it, so I reformed it to be in order and in doing so I hope I made it easier to modify. It sure does hash, but... not too well. Averaging in the 14500s in collisions, and taking about 15 seconds to run. The only thing this function does "well" is run.
 
 <br>Attempt 2. <H3>
+This attempt uses the same basic hash from the last function but uses a linked list to store values instead. While it doesn't handle the collisions that well, it it much faster, only taking 0.03 seconds to run through both tables, but still averaging 14500 collisions.
 
 <br>Attempt 3. <H3>
 
