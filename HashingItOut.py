@@ -83,49 +83,70 @@ class HashTables():
     #make the empty hash table
     def __init__(self, size):
         self.size = size
-        self.prime = HashTables.randPrime(1000, 15000)
         self.collisions = 0
+
+        #for linked list
         self.linkedList = [linkedList() for i in range(size)]
 
-    #inserts into the hash function
-    def insert(self, key, value):
-        hashedKeys = self.hashKey(key)
-        index = hashedKeys % self.size
-        linkedList = self.linkedList[index]
-        self.collisions += linkedList.insert(hashedKeys, value)
 
-      
+        #for linear probing
+        self.linearTable = [None] * size
 
-    #Hashes using the title of the movie
-    def hashKey(self, Key):
-        #do things to stringData, turn it into an int
-        numbered = HashTables.toASCII(Key)
-        added = sum(numbered)
+        #to fix collisions and time for implementation #4
+        self.prime = self.nextPrime(129)
 
-        #simplest hash
-        key = (added % self.prime)
-
-        return key
-
-    def toASCII(stringData):
-            firstFive = stringData[:5]  #First Try, has massive amount of collisions
-            toNumber = [ord (char) for char in firstFive]
-            #print (toNumber)
-            return toNumber
-
-    #take a random number and check if it is prime using the 
-    #sympy library check, if it is prime, return it
-    def randPrime(min, max):
-        while True:
-            prime = random.randint(min, max)
-            if isprime(prime):
-                return prime
-            
-    def nextPrime(num):
+    def nextPrime(self, num):
         while True:
             if isprime(num):
                 return num
             num += 1
+
+    # #inserts into the hash function
+    # def insert(self, key, value):
+    #     hashedKeys = self.hashKey(key)
+    #     index = hashedKeys % self.size
+    #     linkedList = self.linkedList[index]
+    #     self.collisions += linkedList.insert(hashedKeys, value)
+
+    def linearInsert(self, key, value):
+        hashed = self.hashKey(key)
+        index = hashed % self.size
+        collisions = 0
+        while True:
+            insertionSlot = self.linearTable[index]
+
+            #check if empty
+            if insertionSlot is None:
+                self.linearTable[index] = (key, value)
+                self.collisions += collisions
+                return
+            
+            #if the key is the same, update it
+            if insertionSlot[0] == key:
+                return
+            
+            #if there is a collision, check the next slot
+            collisions += 1
+            index = (index + 1) % self.size
+
+            #in case the table gets full
+            if collisions >= self.size:
+                print("The table got full")
+      
+
+    #Hashes using the title of the movie
+
+
+    #take a random number and check if it is prime using the 
+    #sympy library check, if it is prime, return it
+    def hashKey(self, key):
+        #do things to stringData, turn it into an int
+        #initialize a hashed number
+        hashNum = 0
+        for ch in key:
+            hashNum = (hashNum * self.prime + ord(ch))
+        return hashNum
+            
 
 
 #input spreadsheet data into dataITems through csv 
@@ -153,33 +174,31 @@ def main():
 
                 dataItems.append(items)
                 counter += 1
-                tableSize = HashTables.nextPrime(counter * 2)
+    hashTable = HashTables(0)
+    tableSize = hashTable.nextPrime(counter * 2)
                 #hash the dataitems as they come in
-
-
     hashTable = HashTables(tableSize)
 
     #run for title
-    start = time.time()
     print("Running Title")
+    start = time.time()
     for items in dataItems:
-        movieName = items.movieName if items.movieName is not None else ""
-        nameKey = movieName 
-        hashTable.insert(nameKey, items)
-        end = time.time()
+        nameKey = items.movieName if items.movieName is not None else ""
+        #hashTable.insert(nameKey, items)
+        hashTable.linearInsert(nameKey, items)
+    end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
     print(f'there were {hashTable.collisions} collisions')
 
     hashTable = HashTables(tableSize)
     #run for quote
-    start = time.time()
     print("Running quote")
+    start = time.time()
     for items in dataItems:
-        movieName = items.movieName if items.movieName is not None else ""
-        quote = items.quote if items.quote is not None else ""
-        quoteKey = quote
-        hashTable.insert(quoteKey, items)
+        quoteKey = items.quote if items.quote is not None else ""
+        #hashTable.insert(quoteKey, items)
+        hashTable.linearInsert(quoteKey, items)
 
     end = time.time()
     print(f"Loaded {counter} items.")
