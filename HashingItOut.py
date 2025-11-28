@@ -30,9 +30,6 @@ class node:
         self.value = value
         self.next = nextNode
 
-    def nextNode(self, next):
-        self.next = next
-
 class linkedList:
     def __init__(self):
         self.head = None
@@ -53,16 +50,17 @@ class linkedList:
             return collisions
         
         currentNode = self.head
-        parentNode = currentNode
+        parentNode = None
 
         while (currentNode is not None):
-            if currentNode.key == newNode.key:
+            if currentNode.key == key:
+                #then the key exists
                 return collisions
             else:
                 parentNode = currentNode
                 currentNode = currentNode.next
             collisions += 1
-        parentNode.next = currentNode
+        parentNode.next = newNode
         return collisions
         
 
@@ -87,7 +85,7 @@ class HashTables():
         self.size = size
         self.prime = HashTables.randPrime(1000, 15000)
         self.collisions = 0
-        self.linkedList = [linkedList()] * size
+        self.linkedList = [linkedList() for i in range(size)]
 
     #inserts into the hash function
     def insert(self, key, value):
@@ -122,6 +120,12 @@ class HashTables():
             prime = random.randint(min, max)
             if isprime(prime):
                 return prime
+            
+    def nextPrime(num):
+        while True:
+            if isprime(num):
+                return num
+            num += 1
 
 
 #input spreadsheet data into dataITems through csv 
@@ -149,10 +153,11 @@ def main():
 
                 dataItems.append(items)
                 counter += 1
+                tableSize = HashTables.nextPrime(counter * 2)
                 #hash the dataitems as they come in
 
 
-    hashTable = HashTables(5)
+    hashTable = HashTables(tableSize)
 
     #run for title
     start = time.time()
@@ -166,7 +171,7 @@ def main():
     print(f"{end-start:0.2f} seconds")
     print(f'there were {hashTable.collisions} collisions')
 
-    hashTable = HashTables(5)
+    hashTable = HashTables(tableSize)
     #run for quote
     start = time.time()
     print("Running quote")

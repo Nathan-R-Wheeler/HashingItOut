@@ -13,6 +13,7 @@ This attempt implements a very basic hash function, it addes all of the ASCII va
 This attempt uses the same basic hash from the last function but uses a linked list to store values instead. While it doesn't handle the collisions that well, it it much faster, only taking 0.03 seconds to run through both tables, but still averaging 14500 collisions.
 
 <br>Attempt 3. <H3>
+This attempt uses the same linked list function with the first 5 characters hashed, however this one has a few changes to the linked list, however instead of there only being 5 values in the list, this implementation makes a table size by multiplying the item counter by 2 and checking it for prime. If it is not prime, it increases 1 until it is.  This takes 0.03 seconds to run and makes 0 collisions.
 
 <br>Attempt 4. <H3>
 
