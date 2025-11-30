@@ -92,6 +92,9 @@ class HashTables():
         #for linear probing
         self.linearTable = [None] * size
 
+        #for quadratic probing
+        self.quadraticTable = [None] * size
+
         #to fix collisions and time for implementation #4
         self.prime = self.nextPrime(129)
 
@@ -132,6 +135,34 @@ class HashTables():
             #in case the table gets full
             if collisions >= self.size:
                 print("The table got full")
+
+
+    def quadraticInsert(self, key, value):
+        hash = self.hashKey(key)
+        hashedValue = hash % self.size
+        collisions = 0 
+
+        
+        for i in range(self.size):
+            index = (hashedValue + (i * i)) % self.size
+            insertionSlot = self.quadraticTable[index]
+
+
+            #if there is an empty slot
+            if insertionSlot == None:
+                self.quadraticTable[index] = (key, value)
+                self.collisions += collisions
+                return
+            #if the key already exists, we update it
+            if insertionSlot[0] == key:
+                self.quadraticTable[index] = (key, value)
+                return
+            collisions += 1
+
+        print("The table filled up!")
+            
+            
+
       
 
     #Hashes using the title of the movie
@@ -185,7 +216,7 @@ def main():
     for items in dataItems:
         nameKey = items.movieName if items.movieName is not None else ""
         #hashTable.insert(nameKey, items)
-        hashTable.linearInsert(nameKey, items)
+        hashTable.quadraticInsert(nameKey, items)
     end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
@@ -198,7 +229,7 @@ def main():
     for items in dataItems:
         quoteKey = items.quote if items.quote is not None else ""
         #hashTable.insert(quoteKey, items)
-        hashTable.linearInsert(quoteKey, items)
+        hashTable.quadraticInsert(quoteKey, items)
 
     end = time.time()
     print(f"Loaded {counter} items.")
