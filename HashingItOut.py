@@ -104,15 +104,15 @@ class HashTables():
                 return num
             num += 1
 
-    # #inserts into the hash function
-    # def insert(self, key, value):
-    #     hashedKeys = self.hashKey(key)
-    #     index = hashedKeys % self.size
-    #     linkedList = self.linkedList[index]
-    #     self.collisions += linkedList.insert(hashedKeys, value)
+     #inserts into the hash function
+    def insert(self, key, value):
+        hashedKeys = self.hashKey(key)
+        index = hashedKeys % self.size
+        linkedList = self.linkedList[index]
+        self.collisions += linkedList.insert(hashedKeys, value)
 
     def linearInsert(self, key, value):
-        hashed = self.hashKey(key)
+        hashed = self.doubleHash(key)
         index = hashed % self.size
         collisions = 0
         while True:
@@ -138,7 +138,7 @@ class HashTables():
 
 
     def quadraticInsert(self, key, value):
-        hash = self.hashKey(key)
+        hash = self.doubleHash(key)
         hashedValue = hash % self.size
         collisions = 0 
 
@@ -177,6 +177,13 @@ class HashTables():
         for ch in key:
             hashNum = (hashNum * self.prime + ord(ch))
         return hashNum
+    
+    #rehashes the hashkey
+    def doubleHash(self, key):
+        onceHashed = self.hashKey(key)
+        twiceHashed = (onceHashed * self.nextPrime(122))
+        return twiceHashed
+
             
 
 
@@ -216,7 +223,8 @@ def main():
     for items in dataItems:
         nameKey = items.movieName if items.movieName is not None else ""
         #hashTable.insert(nameKey, items)
-        hashTable.quadraticInsert(nameKey, items)
+        #hashTable.quadraticInsert(nameKey, items)
+        hashTable.linearInsert(nameKey, items)
     end = time.time()
     print(f"Loaded {counter} items.")
     print(f"{end-start:0.2f} seconds")
@@ -229,7 +237,8 @@ def main():
     for items in dataItems:
         quoteKey = items.quote if items.quote is not None else ""
         #hashTable.insert(quoteKey, items)
-        hashTable.quadraticInsert(quoteKey, items)
+        #hashTable.quadraticInsert(quoteKey, items)
+        hashTable.linearInsert(nameKey, items)
 
     end = time.time()
     print(f"Loaded {counter} items.")
